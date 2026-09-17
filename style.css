@@ -846,6 +846,17 @@ h2 span {
 
 .policy-section { background: var(--cream-dark); }
 
+.quote-hours {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.9rem;
+}
+
+.quote-hours i { color: #f4d89c; }
+
 .booking-steps {
     display: flex;
     align-items: center;
