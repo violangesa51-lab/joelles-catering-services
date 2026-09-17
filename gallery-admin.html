@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Gallery Admin | Joelle's Catering Services</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-gallery-admin-page="true">
+    <main>
+        <section class="section gallery-section">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="section-label">Joelle's Catering Services</span>
+                    <h2>Gallery Admin</h2>
+                    <p>Sign in to securely manage the photos shown in Our Work.</p>
+                </div>
+                <p class="gallery-status" id="galleryStatus" role="status" aria-live="polite"></p>
+                <div class="gallery-grid" id="galleryGrid" hidden></div>
+                <div class="gallery-admin" id="galleryAdmin" hidden>
+                    <div class="gallery-admin-bar"><div><span class="section-label">Gallery Management</span><h3>Manage your photos</h3></div><button class="gallery-admin-logout" id="galleryLogout" type="button">Log out</button></div>
+                    <form class="gallery-upload-form" id="galleryUploadForm">
+                        <h4>Add new photo</h4>
+                        <div class="gallery-upload-fields">
+                            <label>Photo<input id="galleryFile" type="file" accept="image/jpeg,image/png,image/webp" required></label>
+                            <label>Title<input id="galleryTitle" type="text" maxlength="100" placeholder="e.g. Wedding buffet setup" required></label>
+                            <label>Category<select id="galleryCategory" required><option value="">Select a category</option><option>Buffet Catering</option><option>Event Setup</option><option>Wedding Catering</option><option>Birthday Catering</option><option>Corporate Catering</option><option>Breakfast</option><option>Main Meals</option><option>Snacks</option><option>Desserts</option><option>Drinks</option><option>Private Events</option><option>Other</option></select></label>
+                        </div>
+                        <div class="gallery-preview" id="galleryPreview" hidden><img id="galleryPreviewImage" alt="Selected photo preview"><button id="galleryPreviewCancel" type="button">Cancel</button></div>
+                        <button class="gallery-publish" id="galleryPublishButton" type="submit" disabled>Publish to gallery</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <dialog class="gallery-dialog" id="galleryLoginDialog" aria-labelledby="galleryLoginTitle">
+            <button class="gallery-dialog-close" type="button" data-gallery-close aria-label="Close">&times;</button>
+            <form id="galleryLoginForm"><span class="section-label">Gallery Admin</span><h3 id="galleryLoginTitle">Sign in</h3><label>Email<input id="galleryEmail" type="email" autocomplete="email" required></label><label>Password<input id="galleryPassword" type="password" autocomplete="current-password" required></label><p class="gallery-form-message" id="galleryLoginMessage" role="alert"></p><button class="gallery-publish" type="submit">Sign in</button></form>
+        </dialog>
+        <dialog class="gallery-lightbox" id="galleryLightbox" aria-labelledby="galleryLightboxTitle"><button class="gallery-dialog-close" type="button" data-gallery-close aria-label="Close image viewer">&times;</button><button class="gallery-lightbox-arrow gallery-lightbox-prev" id="galleryLightboxPrev" type="button" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button><img id="galleryLightboxImage" alt=""><button class="gallery-lightbox-arrow gallery-lightbox-next" id="galleryLightboxNext" type="button" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button><div class="gallery-lightbox-caption"><strong id="galleryLightboxTitle"></strong><span id="galleryLightboxCategory"></span></div></dialog>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="gallery.js"></script>
+</body>
+</html>
