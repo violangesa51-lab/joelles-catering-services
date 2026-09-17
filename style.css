@@ -1414,7 +1414,15 @@ h2 span {
     padding: 22px;
     border-radius: 18px;
     border: 1px solid var(--border);
+    min-height: 108px;
+    text-decoration: none;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
+
+a.contact-card:hover,
+a.contact-card:focus-visible { transform: translateY(-4px); border-color: rgba(126, 11, 42, 0.38); box-shadow: 0 14px 24px rgba(89, 19, 38, 0.12); }
+
+.contact-whatsapp { background: linear-gradient(135deg, #fffaf2, #f8eadf); border-color: rgba(126, 11, 42, 0.24); }
 
 .contact-card > i {
     min-width: 50px;
@@ -1438,6 +1446,8 @@ h2 span {
     text-align: center;
     margin-top: 45px;
 }
+
+.social-area p { color: var(--burgundy); font-weight: 700; }
 
 .social-links {
     display: flex;
