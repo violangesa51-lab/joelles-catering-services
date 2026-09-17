@@ -846,6 +846,8 @@ h2 span {
 
 .policy-section { background: var(--cream-dark); }
 
+.form-group-full { grid-column: 1 / -1; }
+
 .quote-hours {
     display: inline-flex;
     align-items: center;

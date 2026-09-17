@@ -98,6 +98,9 @@ quoteForm.addEventListener("submit", function(event) {
     const email =
         document.getElementById("email").value.trim();
 
+    const preferredContact =
+        document.getElementById("preferredContact").value;
+
     const eventType =
         document.getElementById("eventType").value;
 
@@ -159,6 +162,8 @@ Name: ${fullName}
 Phone / WhatsApp: ${phone}
 
 Email: ${email || "Not provided"}
+
+Preferred Contact Method: ${preferredContact}
 
 EVENT DETAILS
 
