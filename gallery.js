@@ -32,7 +32,7 @@
         figure.innerHTML = `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy"><figcaption>${escapeHtml(item.title)}${item.category ? `<small>${escapeHtml(item.category)}</small>` : ""}</figcaption>`;
         figure.addEventListener("click", () => openLightbox(index));
         figure.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openLightbox(index); } });
-        if (isAdmin && item.id) {
+        if (isAdminPage && isAdmin && item.id) {
             const controls = document.createElement("div"); controls.className = "gallery-admin-card";
             controls.innerHTML = '<button type="button" data-edit>Edit</button><button type="button" data-delete>Delete</button>';
             controls.addEventListener("click", (event) => { event.stopPropagation(); if (event.target.dataset.edit !== undefined) editItem(item); if (event.target.dataset.delete !== undefined) deleteItem(item); });
