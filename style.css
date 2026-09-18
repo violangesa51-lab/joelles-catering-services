@@ -422,7 +422,7 @@ h2 span {
     display: grid;
     grid-template-columns: .95fr 1.05fr;
     gap: 70px;
-    align-items: center;
+    align-items: start;
 }
 
 .about-images {
