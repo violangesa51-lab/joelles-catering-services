@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Joelle's Catering | Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-shell" id="app" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark"><i class="fa-solid fa-utensils"></i></span><span>Joelle's<small>Catering Services</small></span></a>
+      <p class="nav-label">CONTENT</p>
+      <nav class="admin-nav" aria-label="Admin navigation">
+        <button class="active" data-view="overview"><i class="fa-solid fa-grid-2"></i>Overview</button>
+        <button data-view="pages"><i class="fa-regular fa-file-lines"></i>Pages</button>
+        <button data-view="menus"><i class="fa-solid fa-utensils"></i>Menus &amp; Packages</button>
+        <button data-view="gallery"><i class="fa-regular fa-images"></i>Gallery</button>
+        <button data-view="reviews"><i class="fa-regular fa-star"></i>Reviews</button>
+      </nav>
+      <p class="nav-label">ENQUIRIES</p>
+      <nav class="admin-nav">
+        <button data-view="enquiries"><i class="fa-regular fa-envelope"></i>Submissions</button>
+        <button data-view="bookings"><i class="fa-regular fa-calendar-check"></i>Bookings</button>
+        <button data-view="customers"><i class="fa-regular fa-user"></i>Customers</button>
+      </nav>
+      <div class="sidebar-bottom"><a href="index.html" target="_blank"><i class="fa-solid fa-arrow-up-right-from-square"></i> View website</a><button id="logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</button></div>
+    </aside>
+    <main class="main-panel">
+      <header class="topbar"><button class="mobile-menu" id="mobileMenu" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button><div><p class="eyebrow">JOELLE'S CATERING SERVICES</p><h1 id="viewTitle">Overview</h1></div><div class="profile"><span id="profileInitial">J</span><small id="profileEmail">Admin</small></div></header>
+      <section class="content-area">
+        <p class="notice" id="notice" role="status"></p>
+        <section class="view active" id="overview">
+          <div class="welcome"><div><span class="eyebrow">PRIVATE DASHBOARD</span><h2>Welcome back, Joelle.</h2><p>Manage your catering business from one place.</p></div><a class="primary" href="index.html" target="_blank">View live website <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <div class="stats" id="stats"><article><i class="fa-regular fa-envelope"></i><strong>0</strong><span>New enquiries</span></article><article><i class="fa-regular fa-calendar-check"></i><strong>0</strong><span>Upcoming bookings</span></article><article><i class="fa-regular fa-images"></i><strong>0</strong><span>Gallery photos</span></article><article><i class="fa-regular fa-star"></i><strong>0</strong><span>Customer reviews</span></article></div>
+          <div class="panel"><div class="panel-head"><div><span class="eyebrow">QUICK ACTIONS</span><h2>What would you like to do?</h2></div></div><div class="action-grid"><button data-go="enquiries"><i class="fa-regular fa-envelope"></i><span>Check enquiries</span></button><button data-go="bookings"><i class="fa-regular fa-calendar-check"></i><span>Manage bookings</span></button><button data-go="menus"><i class="fa-solid fa-utensils"></i><span>Update menu</span></button><button data-go="gallery"><i class="fa-regular fa-images"></i><span>Add gallery photo</span></button></div></div>
+        </section>
+        <section class="view" id="pages"><div class="section-head"><div><span class="eyebrow">WEBSITE CONTENT</span><h2>Pages</h2><p>Update the text on key website sections.</p></div></div><div class="editor-card"><label>Section<select id="pageKey"><option value="home">Home</option><option value="about">About us</option><option value="services">Services</option><option value="contact">Contact details</option></select></label><label>Heading<input id="pageTitle" maxlength="120" placeholder="Section heading"></label><label>Content<textarea id="pageBody" rows="7" placeholder="Write the content visitors should see."></textarea></label><button class="primary" id="savePage">Save changes</button></div></section>
+        <section class="view" id="menus"><div class="section-head"><div><span class="eyebrow">FOOD &amp; PRICING</span><h2>Menus &amp; packages</h2><p>Add, edit or hide packages shown to customers.</p></div><button class="primary" id="newMenu"><i class="fa-solid fa-plus"></i> Add package</button></div><div class="table-wrap"><table><thead><tr><th>PACKAGE</th><th>DESCRIPTION</th><th>PRICE</th><th>STATUS</th><th></th></tr></thead><tbody id="menusBody"></tbody></table></div></section>
+        <section class="view" id="gallery"><div class="section-head"><div><span class="eyebrow">PHOTOS</span><h2>Gallery</h2><p>Use the existing Gallery Admin to safely upload and manage images.</p></div><a class="primary" href="gallery-admin.html">Open gallery manager <i class="fa-solid fa-arrow-right"></i></a></div><div class="empty-card"><i class="fa-regular fa-images"></i><h3>Your gallery is connected</h3><p>Photos added in the gallery manager automatically appear on your website.</p></div></section>
+        <section class="view" id="reviews"><div class="section-head"><div><span class="eyebrow">CUSTOMER FEEDBACK</span><h2>Reviews</h2><p>Approve or hide customer reviews before they appear publicly.</p></div></div><div class="table-wrap"><table><thead><tr><th>CUSTOMER</th><th>REVIEW</th><th>RATING</th><th>STATUS</th><th></th></tr></thead><tbody id="reviewsBody"></tbody></table></div></section>
+        <section class="view" id="enquiries"><div class="section-head"><div><span class="eyebrow">NEW LEADS</span><h2>Customer submissions</h2><p>Messages and quotation requests received from your website.</p></div></div><div class="table-wrap"><table><thead><tr><th>CUSTOMER</th><th>EVENT</th><th>DATE</th><th>CONTACT</th><th>STATUS</th></tr></thead><tbody id="enquiriesBody"></tbody></table></div></section>
+        <section class="view" id="bookings"><div class="section-head"><div><span class="eyebrow">EVENT CALENDAR</span><h2>Bookings</h2><p>Keep track of confirmed catering events.</p></div><button class="primary" id="newBooking"><i class="fa-solid fa-plus"></i> Add booking</button></div><div class="table-wrap"><table><thead><tr><th>CUSTOMER</th><th>EVENT</th><th>EVENT DATE</th><th>GUESTS</th><th>STATUS</th></tr></thead><tbody id="bookingsBody"></tbody></table></div></section>
+        <section class="view" id="customers"><div class="section-head"><div><span class="eyebrow">CUSTOMER LIST</span><h2>Customers</h2><p>People who have made an enquiry or booking.</p></div></div><div class="table-wrap"><table><thead><tr><th>NAME</th><th>PHONE</th><th>EMAIL</th><th>LAST CONTACT</th></tr></thead><tbody id="customersBody"></tbody></table></div></section>
+      </section>
+    </main>
+  </div>
+  <dialog id="loginDialog"><form id="loginForm"><span class="eyebrow">JOELLE'S CATERING SERVICES</span><h2>Admin sign in</h2><p>Use your private administrator account.</p><label>Email<input id="email" type="email" autocomplete="email" required></label><label>Password<input id="password" type="password" autocomplete="current-password" required></label><p class="form-error" id="loginError"></p><button class="primary" type="submit">Sign in</button></form></dialog>
+  <dialog id="itemDialog"><form id="itemForm"><button class="dialog-close" type="button" data-close>&times;</button><span class="eyebrow" id="itemKicker">PACKAGE</span><h2 id="itemTitle">Add package</h2><label>Name<input id="itemName" required maxlength="100"></label><label>Description<textarea id="itemDescription" rows="4" required></textarea></label><label>Price (KSh)<input id="itemPrice" type="number" min="0" step="1"></label><label class="toggle"><input id="itemPublished" type="checkbox" checked> Show on website</label><button class="primary" type="submit">Save</button></form></dialog>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="admin.js"></script>
+</body>
+</html>

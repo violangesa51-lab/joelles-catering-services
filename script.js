@@ -944,3 +944,37 @@ feedbackForm.addEventListener(
 /* SHOW EXISTING LOCAL REVIEWS ON LOAD */
 
 displayReviews();
+
+
+/* =====================================================
+   DASHBOARD CONNECTION
+   Saves quotation requests in the private admin backend.
+   WhatsApp remains available if the backend is unavailable.
+   ===================================================== */
+
+function joellesBackend() {
+    const config = window.JOELLES_SUPABASE || {};
+    if (!window.supabase || !config.url || !config.publishableKey) return null;
+    return window.supabase.createClient(config.url, config.publishableKey);
+}
+
+async function saveWebsiteEnquiry(enquiry) {
+    const client = joellesBackend();
+    if (!client) return;
+    try {
+        await client.from("enquiries").insert(enquiry);
+    } catch (error) {
+        // WhatsApp remains the primary request route if the backend is unavailable.
+    }
+}
+
+quoteForm.addEventListener("submit", () => {
+    saveWebsiteEnquiry({
+        full_name: document.getElementById("fullName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        email: document.getElementById("email").value.trim() || null,
+        event_type: document.getElementById("eventType").value || null,
+        event_date: document.getElementById("eventDate").value || null,
+        status: "new"
+    });
+});
