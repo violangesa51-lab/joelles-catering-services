@@ -2,6 +2,7 @@
   "use strict";
   const config = window.JOELLES_SUPABASE || {};
   const login = document.querySelector("#loginDialog");
+  const recovery = document.querySelector("#recoveryDialog");
   const app = document.querySelector("#app");
   const notice = document.querySelector("#notice");
   const client = window.supabase && config.url && config.publishableKey
@@ -12,6 +13,7 @@
   const text = (value) => String(value || "-").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const date = (value) => value ? new Date(value).toLocaleDateString("en-KE", { day:"numeric", month:"short", year:"numeric" }) : "-";
   const empty = (body, columns, message) => body.innerHTML = `<tr><td colspan="${columns}">${message}</td></tr>`;
+  const openRecovery = () => { login.close(); recovery.showModal(); };
   const activate = (view) => { document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === view)); document.querySelectorAll("[data-view]").forEach(el => el.classList.toggle("active", el.dataset.view === view)); document.querySelector("#viewTitle").textContent = document.querySelector(`[data-view="${view}"]`).textContent.trim(); document.querySelector(".sidebar").classList.remove("open"); if (view !== "overview") loadView(view); };
 
   document.querySelectorAll("[data-view],[data-go]").forEach(button => button.addEventListener("click", () => activate(button.dataset.view || button.dataset.go)));
@@ -37,6 +39,23 @@
     if (await requireAdmin()) { login.close(); app.hidden = false; loadOverview(); }
   });
 
+  document.querySelector("#recoveryForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const password = document.querySelector("#recoveryPassword").value;
+    const confirmation = document.querySelector("#recoveryConfirm").value;
+    const error = document.querySelector("#recoveryError");
+    error.textContent = "";
+    if (password.length < 8) return error.textContent = "Use at least 8 characters.";
+    if (password !== confirmation) return error.textContent = "The passwords do not match.";
+    const { error: updateError } = await client.auth.updateUser({ password });
+    if (updateError) return error.textContent = "Could not save this password. Please request a new link.";
+    await client.auth.signOut();
+    recovery.close();
+    document.querySelector("#recoveryForm").reset();
+    document.querySelector("#loginError").textContent = "Password saved. Sign in with your new password.";
+    login.showModal();
+  });
+
   async function get(table, order = "created_at") { const { data, error } = await client.from(table).select("*").order(order, { ascending: false }); return error ? null : data; }
   async function loadOverview() {
     const [enquiries, bookings, gallery, reviews] = await Promise.all([get("enquiries"), get("bookings"), get("gallery_photos"), get("reviews")]);
@@ -58,5 +77,7 @@
   document.querySelector("#itemForm").addEventListener("submit", async event => { event.preventDefault(); const data = {name:document.querySelector("#itemName").value.trim(),description:document.querySelector("#itemDescription").value.trim(),price:document.querySelector("#itemPrice").value || null,is_published:document.querySelector("#itemPublished").checked}; const request = editingMenu ? client.from("catering_menus").update(data).eq("id", editingMenu.id) : client.from("catering_menus").insert(data); const { error } = await request; document.querySelector("#itemDialog").close(); say(error ? "Could not save this package. Please run the backend setup first." : "Menu package saved.", Boolean(error)); loadMenus(); });
   document.querySelector("#newBooking").addEventListener("click", () => say("Booking entry will be enabled after the database setup is applied."));
   if (!client) { login.showModal(); document.querySelector("#loginError").textContent = "The admin connection is not configured."; return; }
+  client.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") openRecovery(); });
+  if (window.location.hash.includes("type=recovery")) openRecovery();
   requireAdmin().then(ok => { if (ok) { app.hidden = false; loadOverview(); } else login.showModal(); });
 })();
