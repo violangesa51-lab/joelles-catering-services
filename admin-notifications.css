@@ -1,0 +1,6 @@
+.row-action + .row-action { margin-left: 8px; }
+.notification-card { padding: 32px; display: grid; gap: 15px; position: relative; }
+.notification-actions { display: grid; gap: 10px; }
+.notification-actions .primary { justify-content: center; }
+.email-action { background: var(--wine); }
+.notification-note { font-size: 12px; line-height: 1.45; }
