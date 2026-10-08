@@ -256,12 +256,16 @@ h2 span {
 
 .nav-quote-btn {
     background: var(--cream);
-    color: var(--burgundy);
+    color: #651339 !important;
     padding: 10px 15px;
     border-radius: 50px;
     white-space: nowrap;
     border: 0;
     font-weight: 700;
+}
+
+.nav-links button.nav-quote-btn {
+    color: #651339 !important;
 }
 
 .menu-toggle {

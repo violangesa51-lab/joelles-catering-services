@@ -9,7 +9,13 @@
     ? window.supabase.createClient(config.url, config.publishableKey) : null;
   let editingMenu = null;
 
-  const say = (text, error = false) => { notice.textContent = text; notice.style.color = error ? "#a4152c" : ""; };
+  let noticeTimer;
+  const say = (text, error = false) => {
+    clearTimeout(noticeTimer);
+    notice.textContent = text;
+    notice.style.color = error ? "#a4152c" : "";
+    if (text) noticeTimer = setTimeout(() => { notice.textContent = ""; notice.style.color = ""; }, 5000);
+  };
   const text = (value) => String(value || "-").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const date = (value) => value ? new Date(value).toLocaleDateString("en-KE", { day:"numeric", month:"short", year:"numeric" }) : "-";
   const empty = (body, columns, message) => body.innerHTML = `<tr><td colspan="${columns}">${message}</td></tr>`;
