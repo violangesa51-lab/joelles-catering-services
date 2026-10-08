@@ -75,7 +75,25 @@
   document.querySelector("#newMenu").addEventListener("click", () => openMenu());
   document.querySelector("[data-close]").addEventListener("click", () => document.querySelector("#itemDialog").close());
   document.querySelector("#itemForm").addEventListener("submit", async event => { event.preventDefault(); const data = {name:document.querySelector("#itemName").value.trim(),description:document.querySelector("#itemDescription").value.trim(),price:document.querySelector("#itemPrice").value || null,is_published:document.querySelector("#itemPublished").checked}; const request = editingMenu ? client.from("catering_menus").update(data).eq("id", editingMenu.id) : client.from("catering_menus").insert(data); const { error } = await request; document.querySelector("#itemDialog").close(); say(error ? "Could not save this package. Please run the backend setup first." : "Menu package saved.", Boolean(error)); loadMenus(); });
-  document.querySelector("#newBooking").addEventListener("click", () => say("Booking entry will be enabled after the database setup is applied."));
+  const openBooking = () => { document.querySelector("#bookingForm").reset(); document.querySelector("#bookingStatus").value = "confirmed"; document.querySelector("#bookingDialog").showModal(); };
+  document.querySelector("#newBooking").addEventListener("click", openBooking);
+  document.querySelector("[data-close-booking]").addEventListener("click", () => document.querySelector("#bookingDialog").close());
+  document.querySelector("#bookingForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const booking = {
+      customer_name: document.querySelector("#bookingCustomer").value.trim(),
+      event_type: document.querySelector("#bookingEvent").value.trim(),
+      event_date: document.querySelector("#bookingDate").value,
+      guest_count: Number(document.querySelector("#bookingGuests").value),
+      status: document.querySelector("#bookingStatus").value
+    };
+    const { error } = await client.from("bookings").insert(booking);
+    if (error) return say("Could not save this booking. Please try again.", true);
+    document.querySelector("#bookingDialog").close();
+    say("Booking saved.");
+    loadBookings();
+    loadOverview();
+  });
   if (!client) { login.showModal(); document.querySelector("#loginError").textContent = "The admin connection is not configured."; return; }
   client.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") openRecovery(); });
   if (window.location.hash.includes("type=recovery")) openRecovery();
