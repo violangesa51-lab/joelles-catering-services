@@ -958,6 +958,42 @@ function joellesBackend() {
     return window.supabase.createClient(config.url, config.publishableKey);
 }
 
+const publicBookingDialog = document.getElementById("bookingDialog");
+const publicBookingForm = document.getElementById("publicBookingForm");
+const publicBookingDate = document.getElementById("bookingEventDate");
+const publicBookingMessage = document.getElementById("bookingMessage");
+
+publicBookingDate.min = `${year}-${month}-${day}`;
+document.querySelectorAll("[data-open-booking]").forEach(button => button.addEventListener("click", () => {
+    publicBookingMessage.textContent = "";
+    publicBookingForm.reset();
+    publicBookingDate.min = `${year}-${month}-${day}`;
+    publicBookingDialog.showModal();
+}));
+document.querySelector("[data-close-booking]").addEventListener("click", () => publicBookingDialog.close());
+publicBookingForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const client = joellesBackend();
+    if (!client) { publicBookingMessage.textContent = "Booking is temporarily unavailable. Please call or WhatsApp us."; return; }
+    const submit = publicBookingForm.querySelector("button[type='submit']");
+    submit.disabled = true;
+    submit.textContent = "Sending…";
+    const { error } = await client.from("bookings").insert({
+        customer_name: document.getElementById("bookingName").value.trim(),
+        phone: document.getElementById("bookingPhone").value.trim(),
+        email: document.getElementById("bookingEmail").value.trim() || null,
+        event_type: document.getElementById("bookingEventType").value,
+        event_date: publicBookingDate.value,
+        guest_count: Number(document.getElementById("bookingGuestCount").value),
+        status: "pending"
+    });
+    submit.disabled = false;
+    submit.textContent = "Send booking request";
+    if (error) { publicBookingMessage.textContent = "We could not send this request. Please WhatsApp or call us."; return; }
+    publicBookingMessage.textContent = "Thank you — your booking request has been received. We will contact you to confirm availability and deposit details.";
+    publicBookingForm.reset();
+});
+
 async function saveWebsiteEnquiry(enquiry) {
     const client = joellesBackend();
     if (!client) return;

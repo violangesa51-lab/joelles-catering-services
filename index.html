@@ -13,6 +13,16 @@
         .footer-logo .logo-image { width: 185px; height: 70px; }
         .menu-quote-link { display: inline-block; margin-top: 8px; padding: 11px 17px; border-radius: 999px; background: #fff; color: #651339; font-weight: 700; text-decoration: none; }
         .menu-quote-link:hover { background: #f6dc73; color: #4a0c2b; }
+        .booking-dialog { width: min(92vw, 560px); border: 0; border-radius: 20px; padding: 0; box-shadow: 0 24px 80px rgba(36, 10, 22, .28); }
+        .booking-dialog::backdrop { background: rgba(32, 7, 18, .64); }
+        .booking-dialog form { padding: 30px; }
+        .booking-dialog h2 { margin: 6px 0 8px; color: #3f0a25; }
+        .booking-dialog p { color: #6b5a63; }
+        .booking-dialog label { display: block; margin-top: 14px; color: #4a1931; font-weight: 700; }
+        .booking-dialog input, .booking-dialog select { box-sizing: border-box; display: block; width: 100%; margin-top: 6px; padding: 12px; border: 1px solid #d7c0c9; border-radius: 9px; font: inherit; }
+        .booking-dialog .booking-actions { display: flex; gap: 10px; align-items: center; margin-top: 22px; }
+        .booking-dialog .booking-cancel { border: 0; background: transparent; color: #651339; font: inherit; font-weight: 700; cursor: pointer; }
+        .booking-message { min-height: 1.2em; margin: 12px 0 0; font-weight: 700; }
     </style>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,6 +82,7 @@
                 <a href="#quote" class="nav-quote-btn">
                     Request a Quote
                 </a>
+                <button type="button" class="nav-quote-btn" data-open-booking>Book an Event</button>
             </nav>
 
             <button class="menu-toggle"
@@ -150,6 +161,10 @@
                             Request a Quote
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
+
+                        <button type="button" class="btn btn-outline" data-open-booking>
+                            Book an Event
+                        </button>
 
                         <a href="#menu" class="btn btn-outline">
                             Explore Our Menu
@@ -333,7 +348,7 @@
                     </article>
 
                     <article class="menu-card menu-three menu-with-photo">
-                        <img class="menu-photo" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85" alt="Fresh lunch dishes" loading="lazy">
+                        <img class="menu-photo" src="food-presentation.png" alt="Joelle's lunch buffet dishes" loading="lazy">
                         <div class="menu-card-content"><h3>Lunch</h3><p>Vegetable rice<br>Chapati<br>Chicken<br>Creamed spinach<br>Beef pilau<br>Chicken stew<br>Potato wedges<br>Cabbage<br>Salad</p></div>
                     </article>
 
@@ -1287,6 +1302,22 @@
             aria-label="Scroll to top">
         <i class="fa-solid fa-arrow-up"></i>
     </button>
+
+    <dialog class="booking-dialog" id="bookingDialog">
+        <form id="publicBookingForm">
+            <span class="section-label">RESERVE YOUR DATE</span>
+            <h2>Book an Event</h2>
+            <p>Send a booking request and we will confirm availability and deposit details with you.</p>
+            <label for="bookingName">Full name<input id="bookingName" type="text" required maxlength="120" autocomplete="name"></label>
+            <label for="bookingPhone">Phone / WhatsApp number<input id="bookingPhone" type="tel" required maxlength="50" autocomplete="tel"></label>
+            <label for="bookingEmail">Email address <small>(optional)</small><input id="bookingEmail" type="email" maxlength="120" autocomplete="email"></label>
+            <label for="bookingEventType">Event type<select id="bookingEventType" required><option value="">Select event type</option><option>Wedding</option><option>Birthday Party</option><option>Baby Shower</option><option>Corporate Event</option><option>Private Event</option><option>Social Gathering</option><option>Other</option></select></label>
+            <label for="bookingEventDate">Event date<input id="bookingEventDate" type="date" required></label>
+            <label for="bookingGuestCount">Estimated number of guests<input id="bookingGuestCount" type="number" min="1" required></label>
+            <p class="booking-message" id="bookingMessage" role="status"></p>
+            <div class="booking-actions"><button type="submit" class="btn btn-primary">Send booking request</button><button type="button" class="booking-cancel" data-close-booking>Cancel</button></div>
+        </form>
+    </dialog>
 
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
