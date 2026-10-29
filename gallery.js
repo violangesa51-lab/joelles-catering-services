@@ -14,7 +14,10 @@
     const escapeHtml = (text) => String(text || "").replace(/[&<>'"]/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" })[char]);
 
     const staticItems = () => [...grid.querySelectorAll("figure")].map((figure) => ({
-        id: null, image_url: figure.querySelector("img").src, title: figure.querySelector("figcaption").textContent.trim(), category: ""
+        id: null,
+        image_url: figure.querySelector("img").src,
+        title: figure.querySelector("figcaption").textContent.trim(),
+        category: figure.dataset.category || "Other"
     }));
     const fallback = staticItems();
     const publishButton = $("#galleryPublishButton");
@@ -23,24 +26,45 @@
         publishButton.disabled = !($("#galleryFile").files[0] && $("#galleryTitle").value.trim() && $("#galleryCategory").value);
     }
 
-    function card(item, index) {
-        const figure = document.createElement("figure");
-        figure.className = `gallery-item ${index === 0 ? "gallery-large" : ""}`;
-        figure.tabIndex = 0;
-        figure.setAttribute("role", "button");
-        figure.setAttribute("aria-label", `View ${item.title}`);
-        figure.innerHTML = `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy"><figcaption>${escapeHtml(item.title)}${item.category ? `<small>${escapeHtml(item.category)}</small>` : ""}</figcaption>`;
-        figure.addEventListener("click", () => openLightbox(index));
-        figure.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openLightbox(index); } });
-        if (isAdminPage && isAdmin && item.id) {
-            const controls = document.createElement("div"); controls.className = "gallery-admin-card";
-            controls.innerHTML = '<button type="button" data-edit>Edit</button><button type="button" data-delete>Delete</button>';
-            controls.addEventListener("click", (event) => { event.stopPropagation(); if (event.target.dataset.edit !== undefined) editItem(item); if (event.target.dataset.delete !== undefined) deleteItem(item); });
-            figure.append(controls);
-        }
-        return figure;
+    function render() {
+        const grouped = published.reduce((groups, item, index) => {
+            const rawCategory = (item.category || "").toLowerCase();
+            const category = rawCategory.includes("breakfast") ? "Breakfast" : rawCategory.includes("snack") ? "Snacks" : (rawCategory.includes("lunch") || rawCategory.includes("main meal")) ? "Lunch" : "Buffet Catering";
+            (groups[category] ||= []).push({ item, index });
+            return groups;
+        }, {});
+        const categoryOrder = ["Buffet Catering", "Breakfast", "Lunch", "Snacks"];
+        const categoryCards = Object.entries(grouped)
+            .sort(([first], [second]) => categoryOrder.indexOf(first) - categoryOrder.indexOf(second))
+            .map(([category, items]) => {
+            let current = 0;
+            const card = document.createElement("article");
+            card.className = "gallery-category-card";
+            card.innerHTML = `
+                <div class="gallery-category-image">
+                    <img src="${escapeHtml(items[0].item.image_url)}" alt="${escapeHtml(items[0].item.title)}" loading="lazy">
+                    ${items.length > 1 ? '<button type="button" class="gallery-slide-arrow gallery-slide-prev" aria-label="Previous photo"><i class="fa-solid fa-chevron-left"></i></button><button type="button" class="gallery-slide-arrow gallery-slide-next" aria-label="Next photo"><i class="fa-solid fa-chevron-right"></i></button>' : ""}
+                </div>
+                <div class="gallery-category-info"><h3>${escapeHtml(category)}</h3><span class="gallery-slide-count">1 / ${items.length}</span></div>`;
+            const image = card.querySelector("img"), count = card.querySelector(".gallery-slide-count");
+            const show = (next) => {
+                current = (next + items.length) % items.length;
+                const selected = items[current].item;
+                image.src = selected.image_url;
+                image.alt = selected.title;
+                count.textContent = `${current + 1} / ${items.length}`;
+            };
+            card.querySelector(".gallery-category-image").addEventListener("click", (event) => {
+                if (event.target.closest("button")) return;
+                openLightbox(items[current].index);
+            });
+            const previous = card.querySelector(".gallery-slide-prev"), next = card.querySelector(".gallery-slide-next");
+            if (previous) previous.addEventListener("click", () => show(current - 1));
+            if (next) next.addEventListener("click", () => show(current + 1));
+                return card;
+            });
+        grid.replaceChildren(...categoryCards);
     }
-    function render() { grid.replaceChildren(...published.map(card)); }
     function openLightbox(index) { lightboxIndex = index; const item = published[index]; $("#galleryLightboxImage").src = item.image_url; $("#galleryLightboxImage").alt = item.title; $("#galleryLightboxTitle").textContent = item.title; $("#galleryLightboxCategory").textContent = item.category || ""; lightbox.showModal(); }
     function stepLightbox(offset) { openLightbox((lightboxIndex + offset + published.length) % published.length); }
 
@@ -53,7 +77,7 @@
             const { data: signed, error: signedError } = await client.storage.from("gallery-images").createSignedUrl(item.storage_path, 3600);
             return signedError ? null : { ...item, image_url: signed.signedUrl };
         }))).filter(Boolean);
-        published = remote.length ? [...remote, ...fallback] : fallback;
+        published = remote.length ? [...fallback, ...remote] : fallback;
         render(); message("");
     }
     async function checkAdmin() {

@@ -9,6 +9,7 @@
 
     <title>Joelle's Catering Services | Outside Catering Kenya</title>
     <style>
+        [hidden] { display: none !important; }
         .logo-image { display: block; width: 128px; height: 52px; object-fit: contain; border-radius: 6px; background: #fff; }
         .footer-logo .logo-image { width: 185px; height: 70px; }
         .menu-quote-link { display: inline-block; margin-top: 8px; padding: 11px 17px; border-radius: 999px; background: #fff; color: #651339; font-weight: 700; text-decoration: none; }
@@ -66,20 +67,21 @@
     <header class="header">
         <div class="container navbar">
 
-            <a href="#home" class="logo" aria-label="Joelle's Catering Services home">
+            <a href="?page=home" class="logo" aria-label="Joelle's Catering Services home">
                 <img class="logo-image" src="joelles-logo.png" alt="Joelle's Catering Tasty Delights">
             </a>
 
             <nav class="nav-links" id="navLinks">
-                <a href="#home">Home</a>
-                <a href="#about">About</a>
-                <a href="#services">Services</a>
-                <a href="#menu">Our Menu</a>
-                <a href="#gallery">Gallery</a>                <a href="#testimonials">Client Experiences</a>
-                <a href="#coverage">Areas We Serve</a>
-                <a href="#contact">Contact</a>
+                <a href="?page=home">Home</a>
+                <a href="?page=about">About</a>
+                <a href="?page=services">Services</a>
+                <a href="?page=menu">Our Menu</a>
+                <a href="?page=gallery">Gallery</a>
+                <a href="?page=experiences">Client Experiences</a>
+                <a href="?page=areas">Areas We Serve</a>
+                <a href="?page=contact">Contact</a>
 
-                <a href="#quote" class="nav-quote-btn">
+                <a href="?page=quote" class="nav-quote-btn">
                     Request a Quote
                 </a>
                 <button type="button" class="nav-quote-btn" data-open-booking>Book an Event</button>
@@ -94,6 +96,12 @@
         </div>
     </header>
 
+    <aside class="visitor-prompt" id="visitorPrompt" hidden aria-live="polite">
+        <button class="visitor-prompt-close" id="closeVisitorPrompt" type="button" aria-label="Close message">&times;</button>
+        <strong id="visitorPromptTitle">Planning an event?</strong>
+        <span id="visitorPromptText">Check availability and tell us what you have in mind.</span>
+        <a id="visitorPromptLink" href="https://wa.me/254722785377?text=Hello%20Joelle%27s%20Catering%20Services%2C%20I%20would%20like%20to%20check%20availability%20for%20my%20event." target="_blank" rel="noopener"><span id="visitorPromptLinkText">Check availability</span></a>
+    </aside>
 
     <main>
 
@@ -157,7 +165,7 @@
                     </p>
 
                     <div class="hero-buttons">
-                        <a href="#quote" class="btn btn-primary">
+                        <a href="?page=quote" class="btn btn-primary">
                             Request a Quote
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
@@ -166,7 +174,7 @@
                             Book an Event
                         </button>
 
-                        <a href="#menu" class="btn btn-outline">
+                        <a href="?page=menu" class="btn btn-outline">
                             Explore Our Menu
                         </a>
                     </div>
@@ -289,7 +297,7 @@
                     </article>
 
                     <article class="service-card service-with-photo">
-                        <img class="service-photo" src="baby-shower.png.png" alt="Beautiful baby shower celebration setup" loading="lazy">
+                        <img class="service-photo" src="baby-shower-boy-or-girl.jpg" alt="Pink and blue baby shower buffet with finger foods" loading="lazy">
                         <div class="service-card-content"><h3>Baby Showers</h3><p>Beautiful catering for intimate and joyful baby shower celebrations.</p></div>
                     </article>
 
@@ -309,7 +317,7 @@
                     </article>
 
                     <article class="service-card service-with-photo">
-                        <img class="service-photo" src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=900&q=85" alt="Family social gathering with food" loading="lazy">
+                        <img class="service-photo" src="social-gatherings-community-buffet.jpg" alt="Outdoor social gathering with guests and catered food" loading="lazy">
                         <div class="service-card-content"><h3>Social Gatherings</h3><p>Great food and service for family and community gatherings.</p></div>
                     </article>
 
@@ -329,37 +337,52 @@
 
                 <div class="section-heading">
                     <span class="section-label">OUR CATERING MENU</span>
-                    <h2>Choose What You Would Like</h2>
+                    <h2>Our Catering Menu</h2>
                     <p>
-                        Pick the categories that suit your event. We will help you put together the right menu for your guests.
+                        Familiar favourites, prepared with care for your occasion.
                     </p>
                 </div>
 
                 <div class="menu-grid">
 
-                    <article class="menu-card menu-one menu-with-photo">
-                        <img class="menu-photo" src="breakfast-menu.png" alt="Breakfast pancakes, sausages and coffee" loading="lazy">
-                        <div class="menu-card-content"><h3>Breakfast</h3><p>African tea<br>Black coffee<br>Drinking chocolate</p></div>
+                    <article class="menu-card menu-one menu-with-photo menu-editorial-card">
+                        <img class="menu-photo" src="menu-breakfast-arrangement.png" alt="Beautifully arranged breakfast catering selection" loading="lazy">
+                        <div class="menu-card-content">
+                            <h3>Breakfast</h3>
+                            <ul class="menu-list"><li>African tea</li><li>Black coffee</li><li>Drinking chocolate</li><li>Mandazi</li><li>Samosas</li><li>Sausages</li></ul>
+                        </div>
                     </article>
 
-                    <article class="menu-card menu-two menu-with-photo">
-                        <img class="menu-photo" src="snacks-menu.png" alt="Samosas, chapati and mandazi" loading="lazy">
-                        <div class="menu-card-content"><h3>Snacks</h3><p>Sausage<br>Samosa<br>Mandazi<br>Nduma<br>Waffle<br>Boiled egg<br>Sweet potato</p></div>
+                    <article class="menu-card menu-two menu-with-photo menu-editorial-card">
+                        <img class="menu-photo" src="menu-snacks-arrangement.png" alt="Beautifully arranged Kenyan snacks selection" loading="lazy">
+                        <div class="menu-card-content">
+                            <h3>Snacks</h3>
+                            <ul class="menu-list"><li>Sausage</li><li>Samosa</li><li>Mandazi</li><li>Nduma</li><li>Waffle</li><li>Boiled egg</li><li>Sweet potato</li></ul>
+                        </div>
                     </article>
 
-                    <article class="menu-card menu-three menu-with-photo">
-                        <img class="menu-photo" src="food-presentation.png" alt="Joelle's lunch buffet dishes" loading="lazy">
-                        <div class="menu-card-content"><h3>Lunch</h3><p>Vegetable rice<br>Chapati<br>Chicken<br>Creamed spinach<br>Beef pilau<br>Chicken stew<br>Potato wedges<br>Cabbage<br>Salad</p></div>
+                    <article class="menu-card menu-three menu-with-photo menu-editorial-card">
+                        <img class="menu-photo" src="menu-lunch-arrangement.png" alt="Beautifully arranged lunch catering plate" loading="lazy">
+                        <div class="menu-card-content">
+                            <h3>Lunch</h3>
+                            <ul class="menu-list"><li>Vegetable rice</li><li>Chapati</li><li>Chicken</li><li>Creamed spinach</li><li>Beef pilau</li><li>Chicken stew</li><li>Potato wedges</li><li>Cabbage</li><li>Salad</li></ul>
+                        </div>
                     </article>
 
-                    <article class="menu-card menu-four menu-with-photo">
-                        <img class="menu-photo" src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=85" alt="Dessert selection" loading="lazy">
-                        <div class="menu-card-content"><h3>Desserts</h3><p>Cakes<br>Fresh fruits<br>Sweet treats<br>Customized dessert options</p></div>
+                    <article class="menu-card menu-four menu-with-photo menu-editorial-card">
+                        <img class="menu-photo" src="menu-desserts-arrangement.png" alt="Beautifully arranged dessert and fruit selection" loading="lazy">
+                        <div class="menu-card-content">
+                            <h3>Desserts</h3>
+                            <ul class="menu-list"><li>Cakes</li><li>Fresh fruits</li><li>Sweet treats</li><li>Customized dessert options</li></ul>
+                        </div>
                     </article>
 
-                    <article class="menu-card menu-five menu-with-photo">
-                        <img class="menu-photo" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=85" alt="Coffee and drinks" loading="lazy">
-                        <div class="menu-card-content"><h3>Drinks</h3><p>Water<br>Juice<br>Soda<br>Tea<br>Coffee<br>Other non-alcoholic drinks</p></div>
+                    <article class="menu-card menu-five menu-with-photo menu-editorial-card">
+                        <img class="menu-photo" src="menu-drinks-arrangement.png" alt="Beautifully arranged drinks catering selection" loading="lazy">
+                        <div class="menu-card-content">
+                            <h3>Drinks</h3>
+                            <ul class="menu-list"><li>Water</li><li>Juice</li><li>Soda</li><li>Tea</li><li>Coffee</li><li>Other non-alcoholic drinks</li></ul>
+                        </div>
                     </article>
 
                 </div>
@@ -367,7 +390,7 @@
                 <div class="menu-message">
                     <div>
                         <span class="section-label">MADE FOR YOUR EVENT</span>
-                        <h3>Ready to plan your menu?</h3>
+                        <h3>Need a menu for your event?</h3>
                         <p>
                             Tell us your event type, preferred foods and number of guests. We will prepare a quote for you.
                         </p>
@@ -467,7 +490,11 @@
         <section class="section gallery-section" id="gallery">
             <div class="container">
 
-                <div class="section-heading">
+                <div class="section-heading gallery-heading-frame">
+                    <span class="gallery-corner gallery-corner-left" aria-hidden="true"></span>
+                    <span class="gallery-corner gallery-corner-right" aria-hidden="true"></span>
+                    <span class="gallery-leaf gallery-leaf-left" aria-hidden="true">❧</span>
+                    <span class="gallery-leaf gallery-leaf-right" aria-hidden="true">❧</span>
                     <span class="section-label">Our Work</span>
                     <h2>A Taste of Joelle's</h2>
                     <p>Food, presentation and memorable event experiences.</p>
@@ -475,37 +502,43 @@
 
                 <p class="gallery-status" id="galleryStatus" role="status" aria-live="polite"></p>
 
-                <!-- These existing photos remain visible until Supabase has published photos. -->
+                <!-- Gallery photos are arranged by catering category. -->
                 <div class="gallery-grid" id="galleryGrid">
 
-                    <figure class="gallery-item gallery-large">
+                    <figure class="gallery-item" data-category="Buffet Serving">
                         <img src="https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=1200&q=85"
                              alt="Buffet catering">
                         <figcaption>Buffet Catering</figcaption>
                     </figure>
 
-                    <figure class="gallery-item">
+                    <figure class="gallery-item" data-category="Buffet Serving">
                         <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=85"
                              alt="Event table setup">
                         <figcaption>Event Setup</figcaption>
                     </figure>
 
-                    <figure class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85"
-                             alt="Fresh prepared meal">
-                        <figcaption>Fresh Meals</figcaption>
-                    </figure>
-
-                    <figure class="gallery-item">
+                    <figure class="gallery-item" data-category="Buffet Serving">
                         <img src="food-presentation.png"
                              alt="Food presentation">
                         <figcaption>Food Presentation</figcaption>
                     </figure>
 
-                    <figure class="gallery-item">
-                        <img src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=85"
-                             alt="Delicious dishes">
-                        <figcaption>Delicious Dishes</figcaption>
+                    <figure class="gallery-item" data-category="Breakfast">
+                        <img src="menu-breakfast-arrangement.png"
+                             alt="Breakfast menu arrangement">
+                        <figcaption>Breakfast Favourites</figcaption>
+                    </figure>
+
+                    <figure class="gallery-item" data-category="Lunch">
+                        <img src="menu-lunch-arrangement.png"
+                             alt="Lunch menu arrangement">
+                        <figcaption>Lunch Selection</figcaption>
+                    </figure>
+
+                    <figure class="gallery-item" data-category="Snacks">
+                        <img src="menu-snacks-arrangement.png"
+                             alt="Snacks menu arrangement">
+                        <figcaption>Snack Favourites</figcaption>
                     </figure>
 
                 </div>
@@ -1207,7 +1240,7 @@
         <div class="container footer-grid">
 
             <div class="footer-brand">
-                <a href="#home" class="logo footer-logo" aria-label="Joelle's Catering Services home">
+                <a href="?page=home" class="logo footer-logo" aria-label="Joelle's Catering Services home">
                     <img class="logo-image" src="joelles-logo.png" alt="Joelle's Catering Tasty Delights">
                 </a>
 
@@ -1229,12 +1262,13 @@
                 <h4>Quick Links</h4>
 
                 <ul class="footer-links">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#menu">Our Menu</a></li>
-                    <li><a href="#gallery">Gallery</a>                <a href="#testimonials">Client Experiences</a></li>
-                    <li><a href="#quote">Request a Quote</a></li>
+                    <li><a href="?page=home">Home</a></li>
+                    <li><a href="?page=about">About Us</a></li>
+                    <li><a href="?page=services">Services</a></li>
+                    <li><a href="?page=menu">Our Menu</a></li>
+                    <li><a href="?page=gallery">Gallery</a></li>
+                    <li><a href="?page=experiences">Client Experiences</a></li>
+                    <li><a href="?page=quote">Request a Quote</a></li>
                 </ul>
             </div>
 
@@ -1267,7 +1301,7 @@
                     </li>
 
                     <li><i class="fa-solid fa-location-dot"></i><a href="https://www.google.com/maps/search/?api=1&query=Olympic%2C+Nairobi" target="_blank" rel="noopener">Olympic, Nairobi</a></li>
-                    <li><i class="fa-solid fa-map"></i><a href="#quote">Nationwide on request</a></li>
+                    <li><i class="fa-solid fa-map"></i><a href="?page=quote">Nationwide on request</a></li>
                     <li><i class="fa-solid fa-clock"></i> Open 24/7</li>
                 </ul>
             </div>
@@ -1286,15 +1320,18 @@
     </footer>
 
 
-    <a href="https://wa.me/254722785377?text=Hello%20Joelle's%20Catering%20Services,%20I%20would%20like%20to%20inquire%20about%20catering%20for%20my%20event."
-       target="_blank"
-       rel="noopener"
-       class="floating-whatsapp"
-       aria-label="Chat with Joelle's Catering Services on WhatsApp">
+    <div class="floating-contact-actions" aria-label="Contact Joelle's Catering Services">
+        <a class="floating-call" href="tel:+254722785377" data-phone="+254 722 785 377" aria-label="Call Joelle's Catering Services"><i class="fa-solid fa-phone"></i></a>
+        <a href="https://wa.me/254722785377?text=Hello%20Joelle's%20Catering%20Services,%20I%20would%20like%20to%20inquire%20about%20catering%20for%20my%20event."
+           target="_blank" rel="noopener" class="floating-whatsapp" aria-label="Chat with Joelle's Catering Services on WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i><span>Chat with us</span>
+        </a>
+    </div>
 
-        <i class="fa-brands fa-whatsapp"></i>
-        <span>Chat with us</span>
-    </a>
+    <div class="visitor-count" id="visitorCount" hidden aria-live="polite">
+        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+        <span><strong id="visitorCountNumber">0</strong> people have viewed this page</span>
+    </div>
 
 
     <button class="scroll-top"
@@ -1322,6 +1359,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
+    <script src="visitor-engagement.js"></script>
+    <script src="page-router.js"></script>
     <script src="script.js"></script>
     <script src="gallery.js"></script>
     <script src="reviews.js"></script>
