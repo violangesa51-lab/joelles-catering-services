@@ -32,11 +32,19 @@
         for (let i = 1; i <= 5; i += 1) { const star = document.createElement("i"); star.className = i <= review.rating ? "fa-solid fa-star" : "fa-regular fa-star"; reviewStars.append(star); }
         top.append(person, reviewStars);
         const text = document.createElement("p"); text.className = "review-text"; text.textContent = review.message;
+        const response = document.createElement("div"); response.className = "review-business-response";
+        if (review.business_response) {
+            const responseTitle = document.createElement("strong"); responseTitle.textContent = "Joelle's Catering Services";
+            const responseText = document.createElement("p"); responseText.textContent = review.business_response;
+            response.append(responseTitle, responseText);
+        }
         const date = document.createElement("span"); date.className = "review-date"; date.textContent = formatDate(review.created_at);
-        article.append(top, text, date); return article;
+        article.append(top, text); if (review.business_response) article.append(response); article.append(date); return article;
     }
     async function loadReviews() {
-        const { data, error: loadError } = await client.from("customer_reviews").select("name,event_type,rating,message,created_at").order("created_at", { ascending: false });
+        let { data, error: loadError } = await client.from("customer_reviews").select("name,event_type,rating,message,created_at,business_response").eq("is_published", true).order("created_at", { ascending: false });
+        // Keep existing reviews visible until the one-time review update has been applied.
+        if (loadError) ({ data, error: loadError } = await client.from("customer_reviews").select("name,event_type,rating,message,created_at").order("created_at", { ascending: false }));
         if (loadError) return;
         reviewsList.querySelectorAll(".review-card").forEach((item) => item.remove());
         empty.style.display = data.length ? "none" : "flex";
