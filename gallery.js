@@ -70,9 +70,6 @@
 
     async function loadGallery() {
         if (!ready) { published = fallback; render(); return; }
-        // Show the named local categories straight away while saved gallery photos load.
-        published = fallback;
-        render();
         message("Loading gallery…");
         const { data, error } = await client.from("gallery_photos").select("id,title,category,storage_path").eq("is_published", true).order("created_at", { ascending: false });
         if (error) { published = fallback; render(); message("Showing our current gallery.", true); return; }
@@ -80,7 +77,8 @@
             const { data: signed, error: signedError } = await client.storage.from("gallery-images").createSignedUrl(item.storage_path, 3600);
             return signedError ? null : { ...item, image_url: signed.signedUrl };
         }))).filter(Boolean);
-        published = remote.length ? [...fallback, ...remote] : fallback;
+        // Once photos exist in Gallery Admin, the public Gallery must match them exactly.
+        published = remote.length ? remote : fallback;
         render(); message("");
     }
     async function checkAdmin() {
