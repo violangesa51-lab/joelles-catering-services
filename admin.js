@@ -87,16 +87,11 @@
 
   async function get(table, order = "created_at") { const { data, error } = await client.from(table).select("*").order(order, { ascending: false }); return error ? null : data; }
   async function loadOverview() {
-    const [enquiries, bookings, gallery, reviews, metricResult] = await Promise.all([
-      get("enquiries"),
-      get("bookings"),
-      get("gallery_photos"),
-      get("customer_reviews"),
-      client.rpc("get_site_view_total")
-    ]);
-    const values = [enquiries?.filter(x => x.status === "new").length || 0, bookings?.filter(x => x.status !== "completed").length || 0, gallery?.length || 0, reviews?.length || 0];
-    document.querySelectorAll("#stats strong").forEach((el, i) => { if (i < values.length) el.textContent = values[i]; });
-    document.querySelector("#visitorTotal").textContent = Number(metricResult.data || 0).toLocaleString("en-KE");
+    const { data, error } = await client.rpc("get_admin_dashboard_totals").single();
+    if (error || !data) return say("Could not load dashboard totals. Please refresh and try again.", true);
+    const values = [data.new_enquiries, data.active_bookings, data.gallery_photo_count, data.review_count];
+    document.querySelectorAll("#stats strong").forEach((el, i) => { if (i < values.length) el.textContent = Number(values[i] || 0).toLocaleString("en-KE"); });
+    document.querySelector("#visitorTotal").textContent = Number(data.visitor_count || 0).toLocaleString("en-KE");
   }
   async function loadView(view) {
     if (!client) return;
