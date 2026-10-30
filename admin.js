@@ -91,7 +91,60 @@
     const values = [enquiries?.filter(x => x.status === "new").length || 0, bookings?.filter(x => x.status !== "completed").length || 0, gallery?.length || 0, reviews?.length || 0];
     document.querySelectorAll("#stats strong").forEach((el, i) => el.textContent = values[i]);
   }
-  async function loadView(view) { if (!client) return; if (view === "menus") return loadMenus(); if (view === "enquiries") return loadEnquiries(); if (view === "bookings") return loadBookings(); if (view === "customers") return loadCustomers(); if (view === "reviews") return loadReviews(); if (view === "pages") return loadPage(); }
+  async function loadView(view) {
+    if (!client) return;
+    if (view === "menus") return loadMenus();
+    if (view === "enquiries") return loadEnquiries();
+    if (view === "bookings") return loadBookings();
+    if (view === "customers") return loadCustomers();
+    if (view === "reviews") return loadReviews();
+    if (view === "pages") return loadPage();
+    if (view === "gallery") return loadGalleryManager();
+  }
+
+  let adminGalleryPreviewUrl = "";
+
+  const galleryMessage = (value, isError = false) => {
+    const element = document.querySelector("#adminGalleryMessage");
+    element.textContent = value;
+    element.style.color = isError ? "#a4152c" : "";
+  };
+
+  const updateGalleryPublishButton = () => {
+    const file = document.querySelector("#adminGalleryFile").files[0];
+    const title = document.querySelector("#adminGalleryTitle").value.trim();
+    const category = document.querySelector("#adminGalleryCategory").value;
+    document.querySelector("#adminGalleryPublish").disabled = !(file && title && category);
+  };
+
+  const clearGalleryPreview = (clearFile = true) => {
+    if (adminGalleryPreviewUrl) URL.revokeObjectURL(adminGalleryPreviewUrl);
+    adminGalleryPreviewUrl = "";
+    document.querySelector("#adminGalleryPreview").hidden = true;
+    if (clearFile) document.querySelector("#adminGalleryFile").value = "";
+  };
+
+  async function loadGalleryManager() {
+    const list = document.querySelector("#adminGalleryList");
+    list.innerHTML = '<div class="admin-gallery-empty">Loading gallery photos…</div>';
+    const { data, error } = await client.from("gallery_photos").select("id,title,category,storage_path,created_at").order("created_at", { ascending: false });
+    if (error) { list.innerHTML = '<div class="admin-gallery-empty">Could not load your gallery photos.</div>'; return; }
+    if (!data.length) { list.innerHTML = '<div class="admin-gallery-empty">No gallery photos have been added yet.</div>'; return; }
+    const photos = (await Promise.all(data.map(async (item) => {
+      const { data: signed, error: signedError } = await client.storage.from("gallery-images").createSignedUrl(item.storage_path, 3600);
+      return signedError ? null : { ...item, image_url: signed.signedUrl };
+    }))).filter(Boolean);
+    list.innerHTML = photos.map(photo => `<article class="admin-gallery-card"><img src="${text(photo.image_url)}" alt="${text(photo.title)}"><div class="admin-gallery-card-body"><div><strong>${text(photo.title)}</strong><small>${text(photo.category)}</small></div><button type="button" class="admin-gallery-delete" data-delete-gallery-photo="${text(photo.id)}">Delete</button></div></article>`).join("");
+    document.querySelectorAll("[data-delete-gallery-photo]").forEach(button => button.addEventListener("click", async () => {
+      const photo = photos.find(item => item.id === button.dataset.deleteGalleryPhoto);
+      if (!photo || !window.confirm(`Remove “${photo.title}” from the Gallery?`)) return;
+      const { error: recordError } = await client.from("gallery_photos").delete().eq("id", photo.id);
+      if (recordError) return galleryMessage("Could not remove this photo.", true);
+      await client.storage.from("gallery-images").remove([photo.storage_path]);
+      galleryMessage("Photo removed from the Gallery.");
+      loadGalleryManager();
+    }));
+  }
   async function loadMenus() { const body = document.querySelector("#menusBody"), rows = await get("catering_menus", "sort_order"); if (!rows?.length) return empty(body, 5, "No packages yet. Add your first package."); body.innerHTML = rows.map(row => `<tr><td><strong>${text(row.name)}</strong></td><td>${text(row.description)}</td><td>${row.price ? `KSh ${Number(row.price).toLocaleString()}` : "On request"}</td><td><span class="status ${row.is_published ? "" : "pending"}">${row.is_published ? "Published" : "Hidden"}</span></td><td><button class="row-action" data-edit-menu="${row.id}">Edit</button></td></tr>`).join(""); document.querySelectorAll("[data-edit-menu]").forEach(button => button.onclick = () => openMenu(rows.find(row => row.id === button.dataset.editMenu))); }
   async function loadEnquiries() { const body = document.querySelector("#enquiriesBody"), rows = await get("enquiries"); if (!rows?.length) return empty(body, 6, "No customer submissions yet."); body.innerHTML = rows.map(row => `<tr><td><strong>${text(row.full_name)}</strong></td><td>${text(row.event_type)}</td><td>${date(row.event_date)}</td><td>${text(row.phone || row.email)}</td><td><span class="status ${row.status === "new" ? "pending" : ""}">${text(row.status || "new")}</span></td><td><button class="row-action" data-quote-notify="${row.id}">Notify customer</button></td></tr>`).join(""); document.querySelectorAll("[data-quote-notify]").forEach(button => button.onclick = async () => { const row = rows.find(item => item.id === button.dataset.quoteNotify); const { error } = await client.from("enquiries").update({ status: "received" }).eq("id", row.id); if (error) return say("Could not update this quotation request.", true); const name = customerName(row.full_name), event = row.event_type || "event"; notifyCustomer({ phone: row.phone, email: row.email, title: "Quotation receipt ready", subject: "We received your quotation request | Joelle's Catering Services", message: `Hello ${name},\n\nThank you for your quotation request for your ${event}. We have received it and are calculating your amount. We will send your quotation shortly.\n\nKind regards,\nJoelle's Catering Services` }); say("Quotation request marked as received."); loadEnquiries(); loadOverview(); }); }
   async function loadBookings() { const body = document.querySelector("#bookingsBody"), rows = await get("bookings", "event_date"); if (!rows?.length) return empty(body, 6, "No bookings have been added yet."); body.innerHTML = rows.map(row => `<tr><td><strong>${text(row.customer_name)}</strong>${row.phone ? `<br><small>${text(row.phone)}${row.email ? ` · ${text(row.email)}` : ""}</small>` : ""}</td><td>${text(row.event_type)}</td><td>${date(row.event_date)}</td><td>${text(row.guest_count)}</td><td><span class="status ${row.status === "pending" ? "pending" : ""}">${text(row.status || "confirmed")}</span></td><td>${row.status === "pending" ? `<button class="row-action" data-confirm-booking="${row.id}">Confirm &amp; notify</button><button class="row-action" data-decline-booking="${row.id}">Decline &amp; notify</button>` : "-"}</td></tr>`).join(""); document.querySelectorAll("[data-confirm-booking]").forEach(button => button.onclick = async () => { const row = rows.find(item => item.id === button.dataset.confirmBooking); const { error } = await client.from("bookings").update({ status: "confirmed" }).eq("id", row.id); if (error) return say("Could not confirm this booking.", true); const name = customerName(row.customer_name), event = row.event_type || "event", when = date(row.event_date); notifyCustomer({ phone: row.phone, email: row.email, title: "Booking confirmation ready", subject: "Your booking is confirmed | Joelle's Catering Services", message: `Hello ${name},\n\nGreat news! Your ${event} booking for ${when} has been confirmed. Thank you for choosing Joelle's Catering Services.\n\nKind regards,\nJoelle's Catering Services` }); say("Booking confirmed."); loadBookings(); loadOverview(); }); document.querySelectorAll("[data-decline-booking]").forEach(button => button.onclick = async () => { const row = rows.find(item => item.id === button.dataset.declineBooking); const { error } = await client.from("bookings").update({ status: "declined" }).eq("id", row.id); if (error) return say("Could not decline this booking.", true); const name = customerName(row.customer_name), event = row.event_type || "event", when = date(row.event_date); notifyCustomer({ phone: row.phone, email: row.email, title: "Booking update ready", subject: "Update on your booking request | Joelle's Catering Services", message: `Hello ${name},\n\nThank you for your ${event} booking request for ${when}. Unfortunately, we are unable to accommodate this booking. We are sorry for the inconvenience and hope to serve you at another occasion.\n\nKind regards,\nJoelle's Catering Services` }); say("Booking declined."); loadBookings(); loadOverview(); }); }
@@ -122,6 +175,44 @@
     say("Booking saved.");
     loadBookings();
     loadOverview();
+  });
+  document.querySelector("#adminGalleryFile").addEventListener("change", () => {
+    const file = document.querySelector("#adminGalleryFile").files[0];
+    clearGalleryPreview(false);
+    if (file) {
+      adminGalleryPreviewUrl = URL.createObjectURL(file);
+      document.querySelector("#adminGalleryPreviewImage").src = adminGalleryPreviewUrl;
+      document.querySelector("#adminGalleryPreview").hidden = false;
+    }
+    updateGalleryPublishButton();
+  });
+  document.querySelector("#adminGalleryTitle").addEventListener("input", updateGalleryPublishButton);
+  document.querySelector("#adminGalleryCategory").addEventListener("change", updateGalleryPublishButton);
+  document.querySelector("#adminGalleryPreviewCancel").addEventListener("click", () => { clearGalleryPreview(); updateGalleryPublishButton(); });
+  document.querySelector("#adminGalleryForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const file = document.querySelector("#adminGalleryFile").files[0];
+    const title = document.querySelector("#adminGalleryTitle").value.trim();
+    const category = document.querySelector("#adminGalleryCategory").value;
+    if (!file || !title || !category) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) return galleryMessage("Use a JPG, PNG or WebP image no larger than 5 MB.", true);
+    const { data: { user } } = await client.auth.getUser();
+    if (!user) return galleryMessage("Your session has ended. Please sign in again.", true);
+    const submit = document.querySelector("#adminGalleryPublish");
+    submit.disabled = true;
+    submit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading…';
+    const ext = file.name.split(".").pop().toLowerCase();
+    const storagePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await client.storage.from("gallery-images").upload(storagePath, file, { contentType: file.type, upsert: false });
+    if (uploadError) { submit.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Publish photo'; updateGalleryPublishButton(); return galleryMessage("Upload failed. Please try again.", true); }
+    const { error: recordError } = await client.from("gallery_photos").insert({ title, category, storage_path: storagePath, is_published: true });
+    submit.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Publish photo';
+    if (recordError) { await client.storage.from("gallery-images").remove([storagePath]); updateGalleryPublishButton(); return galleryMessage("The photo could not be published.", true); }
+    event.target.reset();
+    clearGalleryPreview(false);
+    updateGalleryPublishButton();
+    galleryMessage("Photo published to your Gallery.");
+    loadGalleryManager();
   });
   if (!client) { login.showModal(); document.querySelector("#loginError").textContent = "The admin connection is not configured."; return; }
   client.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") openRecovery(); });
