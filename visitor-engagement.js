@@ -61,7 +61,7 @@
     }
 
     const config = window.JOELLES_SUPABASE || {};
-    if (!window.supabase || !config.url || !config.publishableKey || !countBox || !countText) return;
+    if (!window.supabase || !config.url || !config.publishableKey) return;
 
     const client = window.supabase.createClient(config.url, config.publishableKey);
     const visitorKey = "joelles-visitor-counted-v1";
@@ -72,7 +72,7 @@
         const total = Number(data);
         if (error || !Number.isFinite(total)) return;
         if (!alreadyCounted) { try { window.localStorage.setItem(visitorKey, "true"); } catch (_) { /* Ignore blocked storage. */ } }
-        countText.textContent = new Intl.NumberFormat("en-KE").format(total);
-        countBox.hidden = false;
+        if (countText) countText.textContent = new Intl.NumberFormat("en-KE").format(total);
+        if (countBox) countBox.hidden = false;
     });
 })();
