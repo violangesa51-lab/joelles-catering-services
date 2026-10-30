@@ -10,6 +10,7 @@
     const promptLinkText = document.getElementById("visitorPromptLinkText");
     const countBox = document.getElementById("visitorCount");
     const countText = document.getElementById("visitorCountNumber");
+    if (countBox) countBox.remove();
 
     const messages = [
         {
@@ -73,6 +74,5 @@
         if (error || !Number.isFinite(total)) return;
         if (!alreadyCounted) { try { window.localStorage.setItem(visitorKey, "true"); } catch (_) { /* Ignore blocked storage. */ } }
         if (countText) countText.textContent = new Intl.NumberFormat("en-KE").format(total);
-        if (countBox) countBox.hidden = false;
     });
 })();
