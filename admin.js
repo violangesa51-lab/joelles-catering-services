@@ -92,11 +92,11 @@
       get("bookings"),
       get("gallery_photos"),
       get("customer_reviews"),
-      client.from("site_metrics").select("metric_value").eq("metric_key", "public_site_views").maybeSingle()
+      client.rpc("get_site_view_total")
     ]);
     const values = [enquiries?.filter(x => x.status === "new").length || 0, bookings?.filter(x => x.status !== "completed").length || 0, gallery?.length || 0, reviews?.length || 0];
     document.querySelectorAll("#stats strong").forEach((el, i) => { if (i < values.length) el.textContent = values[i]; });
-    document.querySelector("#visitorTotal").textContent = Number(metricResult.data?.metric_value || 0).toLocaleString("en-KE");
+    document.querySelector("#visitorTotal").textContent = Number(metricResult.data || 0).toLocaleString("en-KE");
   }
   async function loadView(view) {
     if (!client) return;
