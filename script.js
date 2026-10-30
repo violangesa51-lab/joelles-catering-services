@@ -113,6 +113,9 @@ quoteForm.addEventListener("submit", function(event) {
     const guestNumber =
         document.getElementById("guestNumber").value;
 
+    const budgetRange =
+        document.getElementById("budgetRange").value;
+
     const setup =
         document.getElementById("setup").value;
 
@@ -174,6 +177,8 @@ Event Date: ${formattedDate}
 Event Location: ${eventLocation}
 
 Estimated Guests: ${guestNumber}
+
+Budget Range: ${budgetRange || "Not specified"}
 
 CATERING REQUIREMENTS
 

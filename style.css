@@ -1424,6 +1424,14 @@ h2 span {
     padding: 13px 14px;
 }
 
+.field-help {
+    display: block;
+    margin-top: 7px;
+    color: #6e5b62;
+    font-size: .82rem;
+    line-height: 1.4;
+}
+
 .menu-selection {
     border: 0;
     margin-bottom: 20px;
