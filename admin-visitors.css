@@ -1,0 +1,7 @@
+@media (min-width: 851px) {
+  .stats { grid-template-columns: repeat(5, 1fr); }
+}
+
+@media (max-width: 470px) {
+  .stats { grid-template-columns: 1fr; }
+}

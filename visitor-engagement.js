@@ -64,9 +64,15 @@
     if (!window.supabase || !config.url || !config.publishableKey || !countBox || !countText) return;
 
     const client = window.supabase.createClient(config.url, config.publishableKey);
-    client.rpc("record_site_view").then(({ data, error }) => {
-        if (error || typeof data !== "number") return;
-        countText.textContent = new Intl.NumberFormat("en-KE").format(data);
+    const visitorKey = "joelles-visitor-counted-v1";
+    let alreadyCounted = false;
+    try { alreadyCounted = window.localStorage.getItem(visitorKey) === "true"; } catch (_) { /* Counting still works when storage is unavailable. */ }
+    const request = alreadyCounted ? client.rpc("get_site_view_total") : client.rpc("record_site_view");
+    request.then(({ data, error }) => {
+        const total = Number(data);
+        if (error || !Number.isFinite(total)) return;
+        if (!alreadyCounted) { try { window.localStorage.setItem(visitorKey, "true"); } catch (_) { /* Ignore blocked storage. */ } }
+        countText.textContent = new Intl.NumberFormat("en-KE").format(total);
         countBox.hidden = false;
     });
 })();

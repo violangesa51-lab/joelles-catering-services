@@ -30,4 +30,23 @@ begin
 end;
 $$;
 
+create or replace function public.get_site_view_total()
+returns bigint
+language sql
+security definer
+set search_path = public
+as $$
+    select metric_value
+    from public.site_metrics
+    where metric_key = 'public_site_views';
+$$;
+
+alter table public.site_metrics enable row level security;
+
+drop policy if exists "admins view site metrics" on public.site_metrics;
+create policy "admins view site metrics"
+on public.site_metrics for select
+using (public.is_gallery_admin());
+
 grant execute on function public.record_site_view() to anon, authenticated;
+grant execute on function public.get_site_view_total() to anon, authenticated;

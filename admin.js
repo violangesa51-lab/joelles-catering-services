@@ -87,9 +87,16 @@
 
   async function get(table, order = "created_at") { const { data, error } = await client.from(table).select("*").order(order, { ascending: false }); return error ? null : data; }
   async function loadOverview() {
-    const [enquiries, bookings, gallery, reviews] = await Promise.all([get("enquiries"), get("bookings"), get("gallery_photos"), get("customer_reviews")]);
+    const [enquiries, bookings, gallery, reviews, metricResult] = await Promise.all([
+      get("enquiries"),
+      get("bookings"),
+      get("gallery_photos"),
+      get("customer_reviews"),
+      client.from("site_metrics").select("metric_value").eq("metric_key", "public_site_views").maybeSingle()
+    ]);
     const values = [enquiries?.filter(x => x.status === "new").length || 0, bookings?.filter(x => x.status !== "completed").length || 0, gallery?.length || 0, reviews?.length || 0];
-    document.querySelectorAll("#stats strong").forEach((el, i) => el.textContent = values[i]);
+    document.querySelectorAll("#stats strong").forEach((el, i) => { if (i < values.length) el.textContent = values[i]; });
+    document.querySelector("#visitorTotal").textContent = Number(metricResult.data?.metric_value || 0).toLocaleString("en-KE");
   }
   async function loadView(view) {
     if (!client) return;
