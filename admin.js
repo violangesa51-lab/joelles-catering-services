@@ -8,6 +8,8 @@
   const client = window.supabase && config.url && config.publishableKey
     ? window.supabase.createClient(config.url, config.publishableKey) : null;
   let editingMenu = null;
+  const requestedView = new URLSearchParams(window.location.search).get("view");
+  const validViews = new Set(["overview", "pages", "menus", "gallery", "reviews", "enquiries", "bookings", "customers"]);
 
   let noticeTimer;
   const say = (text, error = false) => {
@@ -63,7 +65,7 @@
     document.querySelector("#loginError").textContent = "";
     const { error } = await client.auth.signInWithPassword({ email: document.querySelector("#email").value, password: document.querySelector("#password").value });
     if (error) return document.querySelector("#loginError").textContent = "Unable to sign in with those details.";
-    if (await requireAdmin()) { login.close(); app.hidden = false; loadOverview(); }
+    if (await requireAdmin()) { login.close(); app.hidden = false; const view = validViews.has(requestedView) ? requestedView : "overview"; activate(view); if (view === "overview") loadOverview(); }
   });
 
   document.querySelector("#recoveryForm").addEventListener("submit", async event => {
@@ -124,5 +126,5 @@
   if (!client) { login.showModal(); document.querySelector("#loginError").textContent = "The admin connection is not configured."; return; }
   client.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") openRecovery(); });
   if (window.location.hash.includes("type=recovery")) openRecovery();
-  requireAdmin().then(ok => { if (ok) { app.hidden = false; loadOverview(); } else login.showModal(); });
+  requireAdmin().then(ok => { if (ok) { app.hidden = false; const view = validViews.has(requestedView) ? requestedView : "overview"; activate(view); if (view === "overview") loadOverview(); } else login.showModal(); });
 })();
